@@ -1,6 +1,9 @@
 # 🧰 PostgreSQL Study Project
 
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
+![DB Test](https://github.com/TamerOnLine/postgres_study_project/actions/workflows/test-db.yml/badge.svg)
+
+
 
 A hands-on educational toolkit for managing PostgreSQL databases using **Python**, **SQLAlchemy**, and **psycopg2** – fully terminal-based and modular.
 
