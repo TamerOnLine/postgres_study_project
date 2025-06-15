@@ -2,7 +2,6 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
-from config.session_registry import SESSIONS
 
 load_dotenv()
 

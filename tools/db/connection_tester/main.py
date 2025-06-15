@@ -9,9 +9,9 @@ if ROOT not in sys.path:
 
 # ✅ الاستيراد بعد إضافة الجذر
 try:
-    from config.test_connections import test_all_connections
-except ImportError:
-    print("❌ Failed to import test_all_connections from test_connections.py")
+    from config.db_config import test_all_connections
+except ImportError as e:
+    print(f"❌ Failed to import test_all_connections from db_config.py: {e}")
     sys.exit(1)
 
 def main():
