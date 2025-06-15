@@ -10,7 +10,7 @@ ROOT = os.path.abspath(os.path.join(CURRENT, "../../../"))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
-from config.postgres_config import engine
+from config.postgres_session import engine
 from base_tool_template import run_tool_template
 
 def list_tables():

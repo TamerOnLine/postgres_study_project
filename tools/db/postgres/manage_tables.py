@@ -12,7 +12,7 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
 from base_tool_template import run_tool_template
-from config.postgres_config import engine, Base
+from config.postgres_session import engine, Base
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 load_dotenv()
