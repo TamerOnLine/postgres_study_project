@@ -1,0 +1,7 @@
+# step01
+psycopg2-binary
+python-dotenv
+sqlalchemy
+
+
+
