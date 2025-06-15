@@ -11,7 +11,9 @@ ROOT = os.path.abspath(os.path.join(CURRENT, "../../../"))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
-from config.postgres_config import engine, Base
+from config.postgres_session import engine
+from models.base import Base
+
 from base_tool_template import run_tool_template
 
 def perform_drop_table():
