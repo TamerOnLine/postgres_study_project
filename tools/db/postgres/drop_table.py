@@ -1,19 +1,20 @@
-try:
-    import setup_path  # لتفعيل مسار الجذر عند التشغيل من ملفات فرعية
-except ImportError:
-    import os
-    import sys
-    ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    if ROOT not in sys.path:
-        sys.path.append(ROOT)
+# tools/db/postgres/drop_table.py
 
-from config.postgres_config import engine, Base
+import os
+import sys
 from sqlalchemy import MetaData
 from sqlalchemy.exc import SQLAlchemyError
 
-description = "Drop a specific table or all tables from the PostgreSQL database"
+# 🧭 إعداد المسار الجذري للمشروع
+CURRENT = os.path.abspath(os.path.dirname(__file__))
+ROOT = os.path.abspath(os.path.join(CURRENT, "../../../"))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
 
-def drop_tables():
+from config.postgres_config import engine, Base
+from base_tool_template import run_tool_template
+
+def perform_drop_table():
     metadata = MetaData()
     metadata.reflect(bind=engine)
 
@@ -36,7 +37,6 @@ def drop_tables():
 
     if choice == -1:
         print("❎ Operation cancelled.")
-        return
     elif choice == 0:
         confirm = input("⚠️ Are you sure you want to DROP ALL tables? (yes/no): ").lower()
         if confirm == "yes":
@@ -47,7 +47,6 @@ def drop_tables():
                 print("❌ Error dropping all tables:", e)
         else:
             print("❎ Operation cancelled.")
-        return
     elif 1 <= choice <= len(tables):
         table_name = tables[choice - 1]
         try:
@@ -60,7 +59,7 @@ def drop_tables():
         print("❌ Invalid choice.")
 
 def run():
-    drop_tables()
+    run_tool_template(perform_drop_table, "Drop Table from PostgreSQL Database")
 
 if __name__ == "__main__":
     run()

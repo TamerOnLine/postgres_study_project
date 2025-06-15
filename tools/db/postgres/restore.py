@@ -1,22 +1,25 @@
 # tools/db/postgres/restore.py
 
-try:
-    import setup_path  # لإضافة مسار المشروع عند التشغيل المباشر
-except ImportError:
-    import os, sys
-    ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../.."))
-    if ROOT not in sys.path:
-        sys.path.insert(0, ROOT)
-
 import os
-import subprocess
-from config.db_config import get_database_credentials
+import sys
 
+# 🧭 إعداد المسار الجذري للمشروع
+CURRENT = os.path.abspath(os.path.dirname(__file__))
+ROOT = os.path.abspath(os.path.join(CURRENT, "../../../"))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
+
+from base_tool_template import run_tool_template
+from config.credentials_helper import get_credentials_from_env
+
+import subprocess
+
+# 🔍 مواقع psql المحتملة
 PSQL_PATHS = [
-    r"C:\\Program Files\\PostgreSQL\\17\\bin\\psql.exe",
-    r"C:\\Program Files\\PostgreSQL\\15\\bin\\psql.exe",
-    r"C:\\Program Files\\PostgreSQL\\14\\bin\\psql.exe",
-    "psql"  # fallback في حال كان psql في PATH
+    r"C:\Program Files\PostgreSQL\17\bin\psql.exe",
+    r"C:\Program Files\PostgreSQL\15\bin\psql.exe",
+    r"C:\Program Files\PostgreSQL\14\bin\psql.exe",
+    "psql"  # fallback
 ]
 
 def find_psql():
@@ -26,25 +29,30 @@ def find_psql():
     raise FileNotFoundError("❌ psql not found in known locations or PATH.")
 
 def choose_backup_file(folder="./backups"):
-    files = [f for f in os.listdir(folder) if f.endswith(".sql")]
-    if not files:
+    all_files = []
+    for root, _, files in os.walk(folder):
+        for f in files:
+            if f.endswith(".sql"):
+                all_files.append(os.path.join(root, f))
+
+    if not all_files:
         raise FileNotFoundError("❌ No .sql backup files found in the 'backups' folder.")
 
     print("\n📂 Available backup files:")
-    for idx, file in enumerate(files):
+    for idx, file in enumerate(all_files):
         print(f"{idx + 1}. {file}")
 
     while True:
         try:
             choice = int(input("Select file number to restore: "))
-            if 1 <= choice <= len(files):
-                return os.path.join(folder, files[choice - 1])
+            if 1 <= choice <= len(all_files):
+                return all_files[choice - 1]
             print("❌ Invalid number.")
         except ValueError:
             print("❌ Enter a valid integer.")
 
-def restore_backup():
-    creds = get_database_credentials()
+def perform_restore():
+    creds = get_credentials_from_env("postgres")
     psql_path = find_psql()
     backup_file = choose_backup_file()
 
@@ -69,7 +77,7 @@ def restore_backup():
         print(e)
 
 def run():
-    restore_backup()
+    run_tool_template(perform_restore, "PostgreSQL Restore Tool")
 
 if __name__ == "__main__":
     run()

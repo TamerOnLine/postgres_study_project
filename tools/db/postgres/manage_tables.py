@@ -1,22 +1,20 @@
 # tools/db/postgres/manage_tables.py
 
-try:
-    import setup_path
-except ImportError:
-    import os, sys
-    ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../.."))
-    if ROOT not in sys.path:
-        sys.path.insert(0, ROOT)
-
-import sys
 import os
+import sys
 import logging
 from dotenv import load_dotenv
 
+# 🧭 إعداد المسار الجذري للمشروع
+CURRENT = os.path.abspath(os.path.dirname(__file__))
+ROOT = os.path.abspath(os.path.join(CURRENT, "../../../"))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
+
+from base_tool_template import run_tool_template
 from config.postgres_config import engine, Base
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
 load_dotenv()
 
 def is_production_environment() -> bool:
@@ -44,13 +42,16 @@ def handle_database_operations(choice: str):
     else:
         logging.warning("❌ Invalid option. No operation performed.")
 
-def run():
+def perform_manage_tables():
     if is_production_environment():
         logging.error("❌ This script cannot be run in production.")
         sys.exit(1)
 
     choice = prompt_user_choice()
     handle_database_operations(choice)
+
+def run():
+    run_tool_template(perform_manage_tables, "Manage PostgreSQL Tables")
 
 if __name__ == "__main__":
     run()

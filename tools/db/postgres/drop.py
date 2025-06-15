@@ -3,7 +3,7 @@
 import os
 import sys
 
-# ✅ أضف المسار الجذر للمشروع
+# 🧭 إعداد المسار الجذري للمشروع
 CURRENT = os.path.abspath(os.path.dirname(__file__))
 ROOT = os.path.abspath(os.path.join(CURRENT, "../../../"))
 if ROOT not in sys.path:
@@ -15,9 +15,7 @@ from config.credentials_helper import get_credentials_from_env
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
-description = "Drop PostgreSQL database if it exists"
-
-def drop_database_if_exists():
+def perform_drop():
     creds = get_credentials_from_env("postgres")
     dbname = creds["dbname"]
     user = creds["user"]
@@ -32,14 +30,12 @@ def drop_database_if_exists():
         conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         cursor = conn.cursor()
 
-        # التحقق من وجود القاعدة
         cursor.execute("SELECT 1 FROM pg_database WHERE datname = %s", (dbname,))
         exists = cursor.fetchone()
 
         if not exists:
             print(f"ℹ️ Database '{dbname}' does not exist.")
         else:
-            # إنهاء كل الجلسات المتصلة
             cursor.execute("""
                 SELECT pg_terminate_backend(pid)
                 FROM pg_stat_activity
@@ -47,7 +43,6 @@ def drop_database_if_exists():
             """, (dbname,))
             print(f"🛑 Terminated other connections to '{dbname}'.")
 
-            # حذف القاعدة
             cursor.execute(f'DROP DATABASE "{dbname}"')
             print(f"🗑️ Dropped database: {dbname}")
 
@@ -58,8 +53,7 @@ def drop_database_if_exists():
         print("❌ Error dropping database:", e)
 
 def run():
-    drop_database_if_exists()
+    run_tool_template(perform_drop, "Drop PostgreSQL Database")
 
 if __name__ == "__main__":
-    run_tool_template(run, "Drop PostgreSQL Database")
-
+    run()

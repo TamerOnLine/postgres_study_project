@@ -1,24 +1,29 @@
 # tools/db/postgres/backup.py
 
-try:
-    import setup_path
-except ImportError:
-    import os, sys
-    ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../.."))
-    if ROOT not in sys.path:
-        sys.path.insert(0, ROOT)
-
 import os
+import sys
+
+# 🧭 إعداد المسار الجذر للمشروع
+CURRENT = os.path.abspath(os.path.dirname(__file__))
+ROOT = os.path.abspath(os.path.join(CURRENT, "../../../"))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
+
+from base_tool_template import run_tool_template
+from config.credentials_helper import get_credentials_from_env
+
 import subprocess
 from datetime import datetime
-from config.db_config import get_database_credentials
+import getpass
 
+# 🔍 مسارات pg_dump الشائعة (ويندوز + fallback)
 COMMON_PG_DUMP_PATHS = [
-    r"C:\\Program Files\\PostgreSQL\\17\\bin\\pg_dump.exe",
-    r"C:\\Program Files\\PostgreSQL\\15\\bin\\pg_dump.exe",
-    r"C:\\Program Files\\PostgreSQL\\14\\bin\\pg_dump.exe",
-    r"C:\\Program Files\\PostgreSQL\\13\\bin\\pg_dump.exe",
-    r"C:\\Program Files\\PostgreSQL\\12\\bin\\pg_dump.exe"
+    r"C:\Program Files\PostgreSQL\17\bin\pg_dump.exe",
+    r"C:\Program Files\PostgreSQL\15\bin\pg_dump.exe",
+    r"C:\Program Files\PostgreSQL\14\bin\pg_dump.exe",
+    r"C:\Program Files\PostgreSQL\13\bin\pg_dump.exe",
+    r"C:\Program Files\PostgreSQL\12\bin\pg_dump.exe",
+    "pg_dump"
 ]
 
 def find_pg_dump():
@@ -27,15 +32,14 @@ def find_pg_dump():
             return path
     return "pg_dump"
 
-def create_backup():
+def perform_backup():
     pg_dump_path = find_pg_dump()
-    creds = get_database_credentials()
+    creds = get_credentials_from_env("postgres")
 
-    # إنشاء مجلد النسخ
-    backup_folder = "./backups"
+    now = datetime.now()
+    backup_folder = os.path.join("backups", now.strftime("%Y"), now.strftime("%m"))
     os.makedirs(backup_folder, exist_ok=True)
 
-    # سؤال المستخدم
     print("\n🔧 Do you want to set a custom backup filename?")
     print("➡ Leave empty to use the default (timestamped) name.")
     custom_name = input("Enter filename (without extension): ").strip()
@@ -43,12 +47,13 @@ def create_backup():
     if custom_name:
         backup_filename = f"{custom_name}.sql"
     else:
-        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
         backup_filename = f"{creds['dbname']}_backup_{timestamp}.sql"
 
     backup_path = os.path.join(backup_folder, backup_filename)
 
-    os.environ["PGPASSWORD"] = creds['password']
+    if not os.getenv("PGPASSWORD"):
+        os.environ["PGPASSWORD"] = getpass.getpass("🔑 Enter PostgreSQL password: ")
 
     dump_command = [
         pg_dump_path,
@@ -62,14 +67,19 @@ def create_backup():
     try:
         print(f"\n📦 Starting backup for database '{creds['dbname']}'...")
         subprocess.run(dump_command, check=True)
-        print(f"✅ Backup saved to: {backup_path}")
+
+        if os.path.exists(backup_path):
+            print(f"✅ Backup saved to: {backup_path}")
+        else:
+            print("⚠️ Backup command finished, but file not found.")
+
     except subprocess.CalledProcessError as e:
         print("❌ Backup failed (process error):", e)
     except FileNotFoundError:
-        print("❌ pg_dump not found. Make sure it's installed or added to PATH.")
+        print("❌ pg_dump not found. Please install PostgreSQL or add it to PATH.")
 
 def run():
-    create_backup()
+    perform_backup()
 
 if __name__ == "__main__":
-    run()
+    run_tool_template(run, "PostgreSQL Backup Tool")

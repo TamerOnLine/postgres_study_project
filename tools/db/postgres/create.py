@@ -3,19 +3,19 @@
 import os
 import sys
 
-# 🧭 تحديد المسار الجذر للمشروع (tameronline-postgres_study_project)
+# 🧭 إعداد المسار الجذري للمشروع
 CURRENT = os.path.abspath(os.path.dirname(__file__))
 ROOT = os.path.abspath(os.path.join(CURRENT, "../../../"))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
 from base_tool_template import run_tool_template
-from config.credentials_helper import get_credentials_from_env  # ✅ الإصدار الصحيح
+from config.credentials_helper import get_credentials_from_env
 
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
-def run():
+def perform_create():
     creds = get_credentials_from_env("postgres")
     db_name = creds["dbname"]
 
@@ -37,5 +37,8 @@ def run():
     except Exception as e:
         print(f"❌ Error creating database: {e}")
 
+def run():
+    run_tool_template(perform_create, "Create PostgreSQL Database")
+
 if __name__ == "__main__":
-    run_tool_template(run, "Create PostgreSQL Database")
+    run()

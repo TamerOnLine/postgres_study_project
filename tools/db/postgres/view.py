@@ -1,21 +1,21 @@
 # tools/db/postgres/view.py
 
-try:
-    import setup_path  # لتفعيل مسار المشروع عند التشغيل المباشر
-except ImportError:
-    import os, sys
-    ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../.."))
-    if ROOT not in sys.path:
-        sys.path.insert(0, ROOT)
-
 import os
-from sqlalchemy import create_engine, text, inspect
+import sys
+from sqlalchemy import text, inspect
+
+# 🧭 إعداد المسار الجذري للمشروع
+CURRENT = os.path.abspath(os.path.dirname(__file__))
+ROOT = os.path.abspath(os.path.join(CURRENT, "../../../"))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
+
 from config.postgres_config import engine
+from base_tool_template import run_tool_template
 
 def list_tables():
     inspector = inspect(engine)
-    tables = inspector.get_table_names()
-    return tables
+    return inspector.get_table_names()
 
 def view_table_content(table_name, limit=5):
     try:
@@ -38,7 +38,7 @@ def view_table_content(table_name, limit=5):
     except Exception as e:
         print(f"❌ Error reading table '{table_name}': {e}")
 
-def run():
+def perform_view_table():
     print("\n📂 Fetching list of tables...")
     tables = list_tables()
     if not tables:
@@ -58,9 +58,14 @@ def run():
 
     if choice == 0:
         print("❎ Operation cancelled.")
-        return
     elif 1 <= choice <= len(tables):
         selected = tables[choice - 1]
         view_table_content(selected)
     else:
         print("❌ Invalid table number.")
+
+def run():
+    run_tool_template(perform_view_table, "View Table Content")
+
+if __name__ == "__main__":
+    run()
