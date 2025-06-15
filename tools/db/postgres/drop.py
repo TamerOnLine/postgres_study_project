@@ -1,19 +1,24 @@
-try:
-    import setup_path  # يضيف مسار الجذر عند التشغيل المباشر
-except ImportError:
-    import os, sys
-    ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../.."))
-    if ROOT not in sys.path:
-        sys.path.insert(0, ROOT)
+# tools/db/postgres/drop.py
+
+import os
+import sys
+
+# ✅ أضف المسار الجذر للمشروع
+CURRENT = os.path.abspath(os.path.dirname(__file__))
+ROOT = os.path.abspath(os.path.join(CURRENT, "../../../"))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
+
+from base_tool_template import run_tool_template
+from config.credentials_helper import get_credentials_from_env
 
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-from config.postgres_config import get_database_credentials
 
 description = "Drop PostgreSQL database if it exists"
 
 def drop_database_if_exists():
-    creds = get_database_credentials()
+    creds = get_credentials_from_env("postgres")
     dbname = creds["dbname"]
     user = creds["user"]
     password = creds["password"]
@@ -56,4 +61,5 @@ def run():
     drop_database_if_exists()
 
 if __name__ == "__main__":
-    run()
+    run_tool_template(run, "Drop PostgreSQL Database")
+

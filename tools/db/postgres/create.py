@@ -1,18 +1,30 @@
+# tools/db/postgres/create.py
+
+import os
+import sys
+
+# 🧭 تحديد المسار الجذر للمشروع (tameronline-postgres_study_project)
+CURRENT = os.path.abspath(os.path.dirname(__file__))
+ROOT = os.path.abspath(os.path.join(CURRENT, "../../../"))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
+
 from base_tool_template import run_tool_template
-from config.postgres_config import get_database_credentials
+from config.credentials_helper import get_credentials_from_env  # ✅ الإصدار الصحيح
+
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 def run():
-    db_config = get_database_credentials()
-    db_name = db_config["database"]
+    creds = get_credentials_from_env("postgres")
+    db_name = creds["dbname"]
 
     try:
         connection = psycopg2.connect(
-            user=db_config["user"],
-            password=db_config["password"],
-            host=db_config["host"],
-            port=db_config["port"],
+            user=creds["user"],
+            password=creds["password"],
+            host=creds["host"],
+            port=creds["port"],
         )
         connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         cursor = connection.cursor()
