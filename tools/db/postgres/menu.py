@@ -5,10 +5,14 @@ def show_postgres_menu():
     
     # قائمة الأدوات المتوفرة
     actions = {
-        "1": "tools.db.postgres.create",       # إنشاء القاعدة والجداول
-        "2": "tools.db.postgres.drop",         # حذف القاعدة
-        "3": "tools.db.postgres.drop_table",   # حذف جميع الجداول
-        # يمكن إضافة المزيد هنا لاحقًا مثل "4": "tools.db.postgres.backup"
+        "1": "tools.db.postgres.create",       
+        "2": "tools.db.postgres.drop",         
+        "3": "tools.db.postgres.drop_table",
+        "4": "tools.db.postgres.backup",
+        "5": "tools.db.postgres.restore", 
+        "6": "tools.db.postgres.manage_tables", 
+        "7": "tools.db.postgres.view",  
+        
     }
 
     print("0. Back")

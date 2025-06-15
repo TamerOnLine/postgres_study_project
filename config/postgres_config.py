@@ -1,15 +1,9 @@
 try:
-
-    from config.db_config import get_database_credentials
+    from config.db_credentials import get_credentials
 except ImportError:
-    
-    from .db_config  import get_database_credentials
+    from .db_credentials import get_credentials
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base
+def get_postgres_url():
+    creds = get_credentials("postgres")
+    return f"postgresql+psycopg2://{creds['user']}:{creds['password']}@{creds['host']}:{creds['port']}/{creds['dbname']}"
 
-creds = get_database_credentials()
-
-DATABASE_URL = f"postgresql://{creds['user']}:{creds['password']}@{creds['host']}:{creds['port']}/{creds['dbname']}"
-engine = create_engine(DATABASE_URL, echo=True)
-Base = declarative_base()
