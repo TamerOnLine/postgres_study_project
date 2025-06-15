@@ -47,4 +47,6 @@ jobs:
           echo "== Backups Created =="
           find backups -name "*.sql" || echo "No backups found"
 
+      - name: ♻️ Run Restore Script
+        run: python tools/db/postgres/restore.py
 
