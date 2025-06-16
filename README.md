@@ -2,7 +2,12 @@
 
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 ![DB Test](https://github.com/TamerOnLine/postgres_study_project/actions/workflows/test-db.yml/badge.svg)
-
+<p>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" alt="PostgreSQL" width="40" title="PostgreSQL">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL" width="40" title="MySQL">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sqlite/sqlite-original.svg" alt="SQLite" width="40" title="SQLite">
+  <img src="https://img.shields.io/badge/GitHub_Actions-CI-blue?logo=github-actions&logoColor=white" alt="GitHub Actions CI" height="30">
+</p>
 
 
 A hands-on educational toolkit for managing PostgreSQL databases using **Python**, **SQLAlchemy**, and **psycopg2** – fully terminal-based and modular.
@@ -75,7 +80,7 @@ SQLITE_DB_NAME=default.db
 ```bash
 # Windows
 py -3.12 -m venv venv
-.\env\Scripts\ctivate
+.\env\Scripts\Activate
 
 # macOS / Linux
 python3 -m venv venv
