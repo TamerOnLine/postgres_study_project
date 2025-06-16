@@ -81,7 +81,9 @@ SQLITE_DB_NAME=default.db
 # Windows
 py -3.12 -m venv venv
 .\env\Scripts\Activate
+```
 
+```bash
 # macOS / Linux
 python3 -m venv venv
 source venv/bin/activate
