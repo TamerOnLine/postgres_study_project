@@ -80,7 +80,7 @@ SQLITE_DB_NAME=default.db
 ```bash
 # Windows
 py -3.12 -m venv venv
-.\env\Scripts\Activate
+.\venv\Scripts\Activate
 ```
 
 ```bash
